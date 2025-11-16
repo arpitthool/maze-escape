@@ -1,5 +1,7 @@
 # Maze Escape 🎮
 
+<img width="1920" height="1080" alt="Screenshot from 2025-11-16 16-11-12" src="https://github.com/user-attachments/assets/19195fcb-8c92-4253-a814-4659cfa10d45" />
+
 A fun and interactive maze navigation game built with TypeScript and HTML5 Canvas. Navigate through a challenging maze to reach the exit and escape!
 
 ## 🎯 Features
