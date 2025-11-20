@@ -80,7 +80,7 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
     resolved_alerts_parsed = resolved_alerts_with_summaries if resolved_alerts_with_summaries else []
     common_alerts_parsed = common_alerts_with_summaries if common_alerts_with_summaries else []
     
-    html = f"""<!DOCTYPE html>
+    html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -291,7 +291,7 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
 """
     
     # New Alerts Section
-    html += f"""
+    html_content += f"""
         <div class="section new">
             <h2>🆕 New Alerts ({new_count})</h2>
 """
@@ -302,7 +302,7 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
             summary = alert.get('summary', 'No summary available.')
             alert_json = html.escape(json.dumps(alert, indent=2))
             
-            html += f"""
+            html_content += f"""
             <div class="alert-card">
                 <div class="alert-header">
                     <div class="alert-title">Alert {i}: {name}</div>
@@ -319,14 +319,14 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
             </div>
 """
     else:
-        html += '<div class="empty-state">No new alerts.</div>'
+        html_content += '<div class="empty-state">No new alerts.</div>'
     
-    html += """
+    html_content += """
         </div>
 """
     
     # Resolved Alerts Section
-    html += f"""
+    html_content += f"""
         <div class="section resolved">
             <h2>✅ Resolved Alerts ({resolved_count})</h2>
 """
@@ -337,7 +337,7 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
             summary = alert.get('summary', 'No summary available.')
             alert_json = html.escape(json.dumps(alert, indent=2))
             
-            html += f"""
+            html_content += f"""
             <div class="alert-card">
                 <div class="alert-header">
                     <div class="alert-title">Alert {i}: {name}</div>
@@ -354,14 +354,14 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
             </div>
 """
     else:
-        html += '<div class="empty-state">No resolved alerts.</div>'
+        html_content += '<div class="empty-state">No resolved alerts.</div>'
     
-    html += """
+    html_content += """
         </div>
 """
     
     # Common/Older Alerts Section
-    html += f"""
+    html_content += f"""
         <div class="section common">
             <h2>⚙️ Existing Alerts ({common_count})</h2>
 """
@@ -372,7 +372,7 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
             summary = alert.get('summary', 'No summary available.')
             alert_json = html.escape(json.dumps(alert, indent=2))
             
-            html += f"""
+            html_content += f"""
             <div class="alert-card">
                 <div class="alert-header">
                     <div class="alert-title">Alert {i}: {name}</div>
@@ -389,20 +389,20 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
             </div>
 """
     else:
-        html += '<div class="empty-state">No existing alerts.</div>'
+        html_content += '<div class="empty-state">No existing alerts.</div>'
     
-    html += """
+    html_content += """
         </div>
 """
     
     # Final Summary Section
-    html += """
+    html_content += """
         <div class="summary-section">
             <h2>📊 Final Summary</h2>
 """
     
     if new_final_summary:
-        html += f"""
+        html_content += f"""
             <div style="margin-bottom: 30px;">
                 <h3 style="color: #dc3545; margin-bottom: 10px;">🆕 New Alerts Summary</h3>
                 <div class="summary-content">{format_summary_text(new_final_summary)}</div>
@@ -410,7 +410,7 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
 """
     
     if common_final_summary:
-        html += f"""
+        html_content += f"""
             <div style="margin-bottom: 30px;">
                 <h3 style="color: #ffc107; margin-bottom: 10px;">⚙️ Existing Alerts Summary</h3>
                 <div class="summary-content">{format_summary_text(common_final_summary)}</div>
@@ -418,21 +418,21 @@ def generate_html_report(new_alerts_with_summaries, resolved_alerts_with_summari
 """
     
     if resolved_final_summary:
-        html += f"""
+        html_content += f"""
             <div style="margin-bottom: 30px;">
                 <h3 style="color: #28a745; margin-bottom: 10px;">✅ Resolved Alerts Summary</h3>
                 <div class="summary-content">{format_summary_text(resolved_final_summary)}</div>
             </div>
 """
     
-    html += """
+    html_content += """
         </div>
     </div>
 </body>
 </html>
 """
     
-    return html
+    return html_content
 
 # Get values
 ZAP_PORT = int(os.getenv("ZAP_PORT", 8090))
