@@ -12,6 +12,34 @@ on:
   workflow_dispatch:  # Manual trigger
 
 jobs:
+  zap_scan_baseline:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: run web app on port 3000
+        run: |
+          docker rmi my-web-app:latest || true
+          docker build -t my-web-app:latest .
+          echo "Docker image built for web app"
+          docker run -d --name my-web-app --network zapnet -p 127.0.0.1:3000:3000 my-web-app:latest
+          echo "Waiting for web app..."
+          until curl -sSf http://127.0.0.1:3000; do sleep 5; done
+          echo "Web app is ready"
+      
+      - name: ZAP Scan Baseline
+        uses: zaproxy/action-baseline@master
+        with:
+          token: ${{ secrets.GH_BOT_TOKEN }}
+          target: 'http://127.0.0.1:3000'
+
+      - name: Delete web app
+        run: |
+          docker rm -f my-web-app || echo "Docker image for Main branch not found"
+          docker rmi my-web-app:latest || true
+          echo "Web app deleted"
+
   zap_scan:
     runs-on: self-hosted
 
@@ -74,7 +102,6 @@ jobs:
         run: |
           > security_report_main.json
           > security_report_pr.json
-          > security_report.txt
           > new_alerts.json
           > resolved_alerts.json
           > common_alerts.json
@@ -171,7 +198,6 @@ jobs:
         with:
           name: security-report
           path: |
-            security_report.txt
             security_report.html
             security_report_pr.json
             # security_report_main.json
