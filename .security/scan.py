@@ -613,34 +613,19 @@ if suffix == "pr":
     # New Alerts Section (collapsible)
     if new_alerts_count > 0:
         comment_body += "<details>\n<summary><b>🆕 New Alerts Summary</b> (" + str(new_alerts_count) + " alert" + ("s" if new_alerts_count > 1 else "") + ")</summary>\n\n"
-        if new_final_summary:
-            comment_body += "```\n" + new_final_summary + "\n```\n\n"
-        if new_summaries:
-            comment_body += "<details>\n<summary><b>📋 Detailed New Alerts</b></summary>\n\n"
-            comment_body += "```\n" + new_summaries + "\n```\n\n"
-            comment_body += "</details>\n\n"
+        comment_body += "```\n" + new_final_summary + "\n```\n\n"
         comment_body += "</details>\n\n"
     
     # Resolved Alerts Section (collapsible)
     if resolved_alerts_count > 0:
         comment_body += "<details>\n<summary><b>✅ Resolved Alerts Summary</b> (" + str(resolved_alerts_count) + " alert" + ("s" if resolved_alerts_count > 1 else "") + ")</summary>\n\n"
-        if resolved_final_summary:
-            comment_body += "```\n" + resolved_final_summary + "\n```\n\n"
-        if resolved_summaries:
-            comment_body += "<details>\n<summary><b>📋 Detailed Resolved Alerts</b></summary>\n\n"
-            comment_body += "```\n" + resolved_summaries + "\n```\n\n"
-            comment_body += "</details>\n\n"
+        comment_body += "```\n" + resolved_final_summary + "\n```\n\n"
         comment_body += "</details>\n\n"
     
     # Older/Common Alerts Section (collapsible)
     if len(common_alerts_data) > 0:
         comment_body += "<details>\n<summary><b>⚙️ Existing Alerts Summary</b> (" + str(len(common_alerts_data)) + " alert" + ("s" if len(common_alerts_data) > 1 else "") + ")</summary>\n\n"
-        if common_final_summary:
-            comment_body += "```\n" + common_final_summary + "\n```\n\n"
-        if common_summaries:
-            comment_body += "<details>\n<summary><b>📋 Detailed Existing Alerts</b></summary>\n\n"
-            comment_body += "```\n" + common_summaries + "\n```\n\n"
-            comment_body += "</details>\n\n"
+        comment_body += "```\n" + common_final_summary + "\n```\n\n"
         comment_body += "</details>\n\n"
     
     # Add download link at the bottom
