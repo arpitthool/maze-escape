@@ -196,17 +196,17 @@ def get_alert_summaries_and_final_summary(
     include_pr_changes: bool = False):
     
     """Get individual alert summaries and final summary without writing to file.
-    Returns tuple: (individual_summaries_text, final_summary_text, fail_risk_alerts_count)"""
+    Returns tuple: (individual_summaries_text, final_summary_text, fail_risk_alerts_count, alert_summaries_list)"""
     
     if(len(alerts) == 0):
-        return ("No alerts to process", "No alerts to process", 0)
+        return ("No alerts to process", "No alerts to process", 0, [])
 
     # Create alert summaries
     alert_summaries, total_processed_alerts, fail_risk_alerts = create_alert_summaries(alerts, prompt_path=prompt_path, include_pr_changes=include_pr_changes)
 
     if not alert_summaries:
         return ("No alerts to include based on the configured risk levels.", 
-                "No alerts to include based on the configured risk levels.", fail_risk_alerts)
+                "No alerts to include based on the configured risk levels.", fail_risk_alerts, [])
 
     # Format individual summaries
     summaries_text = ""
@@ -223,7 +223,7 @@ def get_alert_summaries_and_final_summary(
         prompt_path=prompt_final_path
     )
 
-    return (summaries_text, final_summary, fail_risk_alerts)
+    return (summaries_text, final_summary, fail_risk_alerts, alert_summaries)
     
 def count_alerts(filename):
     """
