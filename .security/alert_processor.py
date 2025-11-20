@@ -103,7 +103,7 @@ def generate_final_summary(
         f"🔒 Total number of alerts in the report: {alerts_count}.\n\n"
     )
 
-    summaries_text = "\n\n".join(item["summary"] for item in alert_summaries)
+    summaries_text = "\n\n".join(alert.get("summary", "") for alert in alert_summaries)
 
     system_prompt = load_prompt(
         prompt_path,
@@ -179,20 +179,15 @@ def create_alert_summaries(alerts, prompt_path: str = ".security/prompts/prompt_
         else:
             summary = "*No summary generated for this alert based on configuration.*"
 
-        alert_summaries.append({
-            "alert": alert,
-            "summary": summary
-        })
+        # Add summary directly into the alert JSON object
+        alert["summary"] = summary
+        alert_summaries.append(alert)
 
     return alert_summaries, total_processed_alerts, fail_risk_alerts
 
 def load_alerts(filename):
     with open(filename, "r", encoding="utf-8") as f:
         return json.load(f)
-
-def process_alerts_file(alerts_json_filename: str, output_filename: str = "security_report.txt"):
-    alerts = load_alerts(alerts_json_filename)
-    return process_alerts(alerts, output_filename)
 
 def get_alert_summaries_and_final_summary(
     alerts, 
@@ -215,62 +210,21 @@ def get_alert_summaries_and_final_summary(
 
     # Format individual summaries
     summaries_text = ""
-    for i, item in enumerate(alert_summaries, 1):
-        summaries_text += f"\nAlert {i}:\n{json.dumps(item['alert'], indent=2)}\n"
-        summaries_text += f"Summary:\n{item['summary']}\n"
+    for i, alert in enumerate(alert_summaries, 1):
+        summaries_text += f"\nAlert {i}:\n{json.dumps(alert, indent=2)}\n"
+        summaries_text += f"Summary:\n{alert.get('summary', '')}\n"
 
     # Generate final summary
     final_summary = generate_final_summary(
         alert_summaries=alert_summaries,
         all_alerts=alerts,
-        summarized_alerts=[item["alert"] for item in alert_summaries if not item["summary"].startswith("*No summary")],
+        summarized_alerts=[alert for alert in alert_summaries if not alert.get("summary", "").startswith("*No summary")],
         alerts_count = total_processed_alerts,
         prompt_path=prompt_final_path
     )
 
     return (summaries_text, final_summary, fail_risk_alerts)
-
-def process_alerts(alerts, output_filename: str = "security_report.txt"):
-    """Main entry to filter alerts, selectively summarize, and generate the final report."""
-
-    if(len(alerts) == 0):
-        print("⚠️ No alerts to process")
-        return "No alerts to process"
-
-    # Create alert summaries
-    alert_summaries, total_processed_alerts, fail_risk_alerts = create_alert_summaries(alerts)
-
-    if not alert_summaries:
-        print("⚠️ No alerts to include based on config.")
-        return "No alerts to include based on the configured risk levels."
-
-    final_summary = generate_final_summary(
-        alert_summaries=alert_summaries,
-        all_alerts=alerts,
-        summarized_alerts=[item["alert"] for item in alert_summaries if not item["summary"].startswith("*No summary")],
-        alerts_count = total_processed_alerts
-    )
-
-    # Save results
-    with open(output_filename, "w", encoding="utf-8") as f:
-        f.write("=== Individual Alert Summaries ===\n")
-        for i, item in enumerate(alert_summaries, 1):
-            f.write(f"\nAlert {i}:\n{json.dumps(item['alert'], indent=2)}\n")
-            f.write(f"Summary:\n{item['summary']}\n")
-        f.write("\n=== Final Security Report ===\n")
-        f.write(final_summary)
-
-    print(f"📄 Security report saved as: {output_filename}")
-
-    # 🚨 Fail the pipeline if needed
-    if fail_risk_alerts > 0:
-        print(f"❌ Found {fail_risk_alerts} alert(s) at level(s) [{', '.join(config.get('fail_on_levels', []))}] configured to fail the pipeline.")
-        sys.exit(1)
-    else:
-        print("✅ No blocking alerts found. Proceeding normally.")
-
-    return final_summary
-
+    
 def count_alerts(filename):
     """
     Count the number of alerts in the provided JSON file.

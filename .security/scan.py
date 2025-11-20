@@ -11,7 +11,7 @@ from zapv2 import ZAPv2
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, script_dir)
 
-from alert_processor import process_alerts_file, sort_and_save_alerts, count_alerts, get_alert_summaries_and_final_summary, load_alerts
+from alert_processor import sort_and_save_alerts, count_alerts, get_alert_summaries_and_final_summary, load_alerts
 from github import post_pr_comment
 from alert_diff import alert_diff
 # Load environment variables
