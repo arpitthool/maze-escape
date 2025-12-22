@@ -61,3 +61,27 @@ p {
   margin-top: 10px;
 }
 
+#feedback-link {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #00ff00;
+  color: #0a0a0a;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.1s;
+  font-family: inherit;
+  display: inline-block;
+}
+
+#feedback-link:hover {
+  background-color: #00cc00;
+  transform: translateY(-2px);
+  color: #0a0a0a;
+}
+
+#feedback-link:active {
+  transform: translateY(0);
+}
+
